@@ -19,6 +19,7 @@
 #'  the 3-D plot. The landscape is divided into \code{n_resolution} cells along both coordinate axes. Individuals that
 #'  appear in the same cell are represented by a single point on the plot. The default value is 50.
 #' @param proj The coordinate system that is used for plotting. The default is EPSG 4326.
+#' @param outputfile A string specifying the name of the output file where the 3-D plot will be saved. The default is "residuals_3d.html".
 #' @return An object of class \code{SpatialLinesDataFrame}, containing coordinates of the line segments joining each 
 #'  pair of individuals and the corresponding IBD residuals.
 #' @examples
@@ -28,7 +29,7 @@
 #' @importFrom rgl open3d points3d segments3d axes3d grid3d title3d
 #' @importFrom sp CRS Lines Line SpatialLines SpatialLinesDataFrame
 
-rdm_residual <- function(IBD.res, Geo_raw, min.dist = 1, max.dist = Inf, n_resolution = 50, proj=sp::CRS("+init=epsg:4326")){
+rdm_residual <- function(IBD.res, Geo_raw, min.dist = 1, max.dist = Inf, n_resolution = 50, proj=sp::CRS("+init=epsg:4326"), outputfile = "residuals_3d.html"){
 
   sample.points <- read.table(file = Geo_raw, sep = '\t', header = T, row.names = 1, fill = T)
 
@@ -95,6 +96,8 @@ rdm_residual <- function(IBD.res, Geo_raw, min.dist = 1, max.dist = Inf, n_resol
   df <- data.frame(Res_segments$z)
 
   Res_SLDF <- sp::SpatialLinesDataFrame(Res_lines, data=df)
+
+  htmlwidgets::saveWidget(rgl::rglwidget(), outputfile)
 
   return(Res_SLDF)
 
